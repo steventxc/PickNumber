@@ -24,7 +24,7 @@
         android:id="@+id/number_pick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/number_tip"
+        android:layout_below="@id/number_tip"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
         android:hint="从0-9中选取中意的数字"
@@ -34,27 +34,17 @@
         android:id="@+id/alphabet_pick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/number_pick"
+        android:layout_below="@id/number_pick"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
         android:hint="除'I'和'O'外的24个字母"
         android:inputType="textCapCharacters" />
 
-    <Button
-        android:id="@+id/button_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:onClick="onSubmitClicked"
-        android:text="开始" />
-
     <Spinner
         android:id="@+id/spinner_format"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/alphabet_pick"
+        android:layout_below="@id/alphabet_pick"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp" />
 
@@ -62,9 +52,15 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner_format"
+        android:layout_below="@id/spinner_format"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:text="#代表字母，$代表数字" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/result_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView" />
 
 </RelativeLayout>
