@@ -80,6 +80,11 @@ public class NumberFormat {
             "$#$$#",
     };
 
+    /**
+     * 号牌总共有5位
+     */
+    static final int TOTAL_NUMBER_SIZE = 5;
+
     private int minDigitSize;
     private int maxDigitSize;
     private int minAlphabeticSize;
@@ -111,5 +116,42 @@ public class NumberFormat {
      */
     public int getMaxAlphabeticSize() {
         return maxAlphabeticSize;
+    }
+
+    public void parse(int format, char[] digit, char[] alph) {
+        if (format >= AVAILABLE_RESOURCES_FORMAT.length)
+            return;
+
+        if (format != -1) {
+
+        } else {
+
+        }
+    }
+
+    private String match(int pos, char[] digit, char[] alpha) {
+        int alphaNum = 0, digitNum = 0;
+
+        final char[] target = AVAILABLE_RESOURCES_FORMAT[pos].toCharArray();
+        char[] results = new char[5];
+        for (int i = 0; i < TOTAL_NUMBER_SIZE; i++) {
+            char c = target[i];
+            if (c == '#') {
+                // 字母与当前输入不符合，格式不正确不用继续匹配
+                if (alphaNum >= alpha.length) {
+                    return null;
+                }
+
+                results[i] = alpha[alphaNum++];
+            } else {
+                // 数字与当前输入不符合，格式不正确不用继续匹配
+                if (digitNum >= digit.length)
+                    return null;
+
+                results[i] = digit[digitNum++];
+            }
+        }
+
+        return new String(results);
     }
 }

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -14,12 +16,21 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.mikepenz.fastadapter.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter_extensions.items.SingleLineItem;
+
+import static com.steven.picknumber.NumberFormat.TOTAL_NUMBER_SIZE;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "PICK_NUMBER";
 
     private EditText numberText, alphabetText;
     private Spinner formatSpinner;
+
+    private FastItemAdapter<SingleLineItem> fastItemAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +43,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onSubmitClicked(view);
             }
         });
 
@@ -74,12 +84,68 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        //
+        fastItemAdapter = new FastItemAdapter();
+
+        RecyclerView resultList = (RecyclerView) findViewById(R.id.result_list);
+        resultList.setLayoutManager(new LinearLayoutManager(this));
+        resultList.setAdapter(fastItemAdapter);
     }
 
     public void onSubmitClicked(View view) {
+        NumberFormat numberFormat = NumberFormat.getInstance();
+
+        numberText.clearFocus();
+        alphabetText.clearFocus();
+        // 隐藏软键盘
+        // TODO: 16/11/3  
+
+        // 数字
         String digit = numberText.getText().toString();
+        if (digit.length() > numberFormat.getMaxDigitSize()) {
+            String msg = String.format("数字最多不能超过%d位", numberFormat.getMaxDigitSize());
+            new MaterialDialog.Builder(this).
+                    content(msg).positiveText("确定").show();
+            return;
+
+        } else if (digit.length() < numberFormat.getMinDigitSize()) {
+            String msg = String.format("数字最少不能小于%d位", numberFormat.getMinDigitSize());
+            new MaterialDialog.Builder(this).
+                    content(msg).positiveText("确定").show();
+            return;
+        }
+
+        int availableAlphSize = NumberFormat.TOTAL_NUMBER_SIZE - digit.length();
+
+        // 字母
         String alphabet = alphabetText.getText().toString();
-        String format = formatSpinner.getSelectedItem().toString();
+        if (alphabet.length() != availableAlphSize) {
+            String msg = String.format("还需要%d个字母", availableAlphSize);
+            new MaterialDialog.Builder(this).
+                    content(msg).positiveText("确定").show();
+            return;
+        }
+
+        alphabet = alphabet.toLowerCase();
+        if (alphabet.contains("i") || alphabet.contains("o")) {
+            new MaterialDialog.Builder(this).
+                    content("只能选择除\"I、O\"以外的24个字母").positiveText("确定").show();
+            return;
+        }
+
+        int formatIdx = formatSpinner.getSelectedItemPosition();
+        if (formatIdx == 0) {
+            // 尝试所有可能
+        } else {
+            String format = formatSpinner.getSelectedItem().toString();
+
+        }
+
+        for (int i = 0; i<11; i++) {
+            SingleLineItem item = new SingleLineItem().withName("" + i);
+            fastItemAdapter.add(item);
+        }
     }
 
     @Override
